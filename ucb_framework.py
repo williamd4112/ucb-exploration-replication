@@ -14,6 +14,8 @@ from baselines.deepq.replay_buffer import ReplayBuffer, PrioritizedReplayBuffer
 import multiheaded_build_graph
 from interpolated_learning_rate import interpolated_decay
 
+from baselines.deepq.utils import ObservationInput
+
 class ActWrapper(object):
     def __init__(self, act, act_params):
         self._act = act
@@ -189,7 +191,8 @@ def learn(env,
     # by cloudpickle when serializing make_obs_ph
     observation_space_shape = env.observation_space.shape
     def make_obs_ph(name):
-        return U.BatchInput(observation_space_shape, name=name)
+        return ObservationInput(env.observation_space, name=name)
+
 
     global_step = tf.Variable(0, trainable=False)
     lr = interpolated_decay(start_lr, end_lr, global_step, start_step, end_step)
